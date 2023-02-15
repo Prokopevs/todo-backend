@@ -5,11 +5,13 @@ const connectDB = require("./db/connect")
 require("dotenv").config()
 const notFound = require("./middleware/not-found")
 const errorHandlerMiddleware = require("./middleware/error-handler")
+var cors = require('cors')
 //middleware
 app.use(express.static("./"))
 app.use(express.json())
 
 // routes
+app.use(cors())
 app.use("/app/v1/tasks", tasks)
 app.use(notFound)
 app.use(errorHandlerMiddleware)

@@ -3,14 +3,21 @@ const asyncWrapper = require("../middleware/async")
 const { createCustomError } = require('../errors/custom-error')
 
 const getAllTasks = asyncWrapper( async (req, res) => {
-    const tasks = await Task.find({})
+    console.log(req.query)
+    const tasks = await Task.find(req.query)
+    
     res.status(200).json({ tasks })
 })
 
-const createTask = asyncWrapper( async (req, res) => {
-    const task = await Task.create(req.body)
-    res.status(201).json({ task })
-})
+const createTask =  async (req, res) => {
+    try {
+        console.log(req.body)
+        const task = await Task.create(req.body)
+        res.status(201).json({ task })
+    } catch (error) {
+        res.status(500).json({ msg: error })
+    }
+}
 
 const getTask = asyncWrapper( async (req, res) => {
     const id = req.params.id
@@ -23,8 +30,6 @@ const getTask = asyncWrapper( async (req, res) => {
 
 const updateTask = asyncWrapper( async (req, res) => {
     const id = req.params.id
-    console.log(id)
-    console.log(req.body)
     const task = await Task.findOneAndUpdate({_id:id}, req.body, {new: true, runValidators: true})
     if (!task) {
         return next(createCustomError(`No task with id : ${taskID}`, 404))
